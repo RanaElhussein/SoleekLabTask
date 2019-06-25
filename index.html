@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <style>
+        div{
+            font:15px Verdana;
+            width:450px;
+        }
+        ul {
+            padding:0;
+            margin:2px 5px; 
+            list-style:none; 
+            border:0; 
+            float:left; 
+            width:100%;
+        }
+        li {
+            width:50%; 
+            float:left; 
+            display:inline-block; 
+        }
+        table, input {
+            text-align:left;
+            font:13px Verdana;
+        }
+        table, td, th 
+        {
+            margin:10px 0;
+            padding:2px 10px;
+        }
+        td, th {
+            border:solid 1px #CCC;
+        }
+        button {
+            font:13px Verdana;
+            padding:3px 5px;
+        }
+        #image{
+         border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 5px;
+          width: 100px;
+          }
+    </style>
+</head>
+<body>
+    <div ng-app="myApp" ng-controller="myController">
+        <ul>
+            <li>SKU Code</li>
+            <li><input type="text" ng-model="SKU" /></li>
+        </ul>
+        <ul>
+            <li>Name of Item</li>
+            <li><input type="text" ng-model="name" /></li>
+        </ul>
+        <ul>
+            <li>Image URL of Item</li>
+            <li><input type="text" ng-model="image" /></li>
+        </ul>
+        <ul>
+            <li>Category of Item</li>
+            <li><input type="text" ng-model="category" /></li>
+        </ul>
+        <ul>
+            <li>Price of Item</li>
+            <li><input type="text" ng-model="price" /></li>
+        </ul>
+        <ul>
+            <li> </li><li><input type="button" value="Add" ng-if="!singleEmployeeSelected" ng-click="addRow()" />
+            <input type="button" value="Edit" ng-if="singleEmployeeSelected" ng-click="updateRow()" /></button></li>
+        </ul>
+
+        <!--CREATE A TABLE-->
+        <table> 
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Date</th>
+            </tr>
+
+            <tr ng-repeat="product in productArray">
+                <td><label>{{product.SKU}}</label></td>
+                <td><label>{{product.name}}</label></td>
+                <td><img id = "image" ng-src="{{product.image}}"/></td>
+                <td><label>{{product.category}}</label></td>
+                <td><label>{{product.price}}</label></td>
+                <td><label>{{product.date | date:'dd-MM-yyyy '}}</label></td>
+                <td><input type="checkbox" ng-model="product.Remove"/></td>
+            </tr>
+        </table>
+
+        <div>
+                <button ng-click="removeRow()">Remove Row</button>
+                <button ng-click="removeRow()">Update Row</button>
+        </div>
+
+        <div id="display" style="padding:10px 0;">{{display}}</div>
+    </div>
+</body>
+
+<!--The Controller-->
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myController', function ($scope) {
+
+        // JSON ARRAY TO POPULATE TABLE.
+        $scope.productArray =
+        [
+            {'SKU': 1,  'name': 'Total Eclipse', 'image': 'https://www.w3schools.com/w3css/img_lights.jpg', 'category':3 ,'price':200, 'date': '20140313T00:00:00' },
+            {'SKU': 20, 'name': 'My Left Foot', 'image': 'https://www.w3schools.com/w3css/img_lights.jpg', 'category':5 ,'price':64, 'date':'20140313T00:00:00'},
+            {'SKU': 30, 'name': 'Forest Gump', 'image': 'https://www.w3schools.com/w3css/img_lights.jpg', 'category': 9,'price':52, 'date':'20140313T00:00:00' }
+        ];
+
+        // GET VALUES FROM INPUT BOXES AND ADD A NEW ROW TO THE TABLE.
+        $scope.addRow = function () {
+            
+                var product = [];
+                product.SKU = $scope.SKU;
+                product.name = $scope.name;
+                product.image = $scope.image;
+                product.category = $scope.category;
+                product.price = $scope.price;
+                product.date = new Date();
+                
+                //var currentList = $scope.movieArray;
+                //var newList = currentList.concat(movie);
+                //$scope.movieArray = newList;
+
+                $scope.productArray.push(product);
+                
+
+                // CLEAR TEXTBOX.
+                $scope.SKU = null;
+                $scope.name = null;
+                $scope.image = null;
+                $scope.category = null;
+                $scope.price = null;
+                $scope.date = null;
+            
+        };
+        
+        $scope.singleProductSelected = false;
+  
+      $scope.setSelectedProduct = function (product){
+        if($scope.products.filter(x => x.selected).length > 1){
+          $scope.selectedProducts = null;
+          $scope.singleProductsSelected = false;
+        } else {
+          $scope.selectedproduct = 						               angular.copy($scope.products.find(x => x.selected));
+          $scope.singleProductSelected = !!$scope.selectedProduct;
+        }
+      }
+
+        // REMOVE SELECTED ROW(s) FROM TABLE.
+        $scope.removeRow = function () {
+            var arrProduct = [];
+            angular.forEach($scope.productArray, function (value) {
+                if (!value.Remove) {
+                    arrProduct.push(value);
+                } 
+            });
+            $scope.productArray = arrProduct;
+            alert("Product removed"); 
+
+        };
+
+		 $scope.updateRow = function () {
+            var arrProduct = [];
+            angular.forEach($scope.productArray, function (value) {
+                if (!value.Remove) {
+                    arrProduct.push(value);
+                } 
+            });
+            $scope.productArray = arrProduct;
+            alert("Product removed"); 
+
+        };
+        
+        $scope.updateRow = function() {
+    
+    var productToEdit = $scope.productArray.find(x => x.SKU === 			$scope.movie.SKU);
+    productToEdit.name = $scope.product.name;
+    productToEdit .category = $scope.product.category;
+    productToEdit .image = $scope.product.image;
+    productToEdit .price = $scope.product.price;
+  }
+
+
+
+    });
+</script>
+</html>
